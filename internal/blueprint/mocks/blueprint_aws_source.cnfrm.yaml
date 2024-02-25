@@ -1,0 +1,21 @@
+version: 1
+sources:
+  devEnv:
+    provider: aws_ssm
+    config:
+      Region: us-east-1
+      EndpointUrl: http://localhost:4566
+    queryOptions:
+      Path: /app/
+      Recursive: true
+      MaxResults: 1
+ruleset:
+  - $value: $devEnv.'app'.'config'.'db'.'host'
+    predicate: equal
+    arguments:
+      - sensitive:
+          value: localhost
+  - $value: $devEnv.'app'.'config'.'db'.'port'
+    predicate: equal
+    arguments:
+      - value: "5432"

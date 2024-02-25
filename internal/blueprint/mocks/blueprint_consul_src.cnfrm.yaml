@@ -1,0 +1,36 @@
+version: 1
+sources:
+  devEnvConfig:
+    provider: consul
+    config:
+      Address: localhost:8500
+      Scheme: http
+      Datacenter: dc1
+    queryOptions:
+      Path: db_conf
+$refs:
+  db_conf: $devEnvConfig.'db_conf'
+ruleset:
+  - $value: $db_conf.'host'
+    predicate: IS_NOT_EQUAL_TO
+    arguments:
+      - value: localhost
+  - $value: $db_conf.'schema'
+    predicate: IS_EQUAL_TO
+    arguments:
+      - sensitive:
+          value: test_db
+  - $value: $db_conf.'port'
+    predicate: IS_EQUAL_TO
+    arguments:
+      - value: 5432
+  - $value: $db_conf.'pool'.'min'
+    predicate: IS_WITHIN_RANGE
+    arguments:
+      - value: 3
+      - value: 5
+  - $value: $db_conf.'pool'.'max'
+    predicate: IS_WITHIN_RANGE
+    arguments:
+      - value: 5
+      - value: 20

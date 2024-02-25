@@ -1,0 +1,152 @@
+// Copyright (c) 2024 Hristo Paskalev
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+
+package reflected
+
+import (
+	"reflect"
+	"testing"
+
+	"github.com/conformize/conformize/common/typed"
+)
+
+func TestGenericValue(t *testing.T) {
+	testCases := []struct {
+		value         interface{}
+		resolvedValue typed.Valuable
+		resolvedRaw   interface{}
+		resolved      typed.Valuable
+		expected      typed.Valuable
+	}{
+		{
+			value:         []interface{}{"hasLength", "greaterThan", 3},
+			resolvedValue: &typed.TupleValue{ElementsTypes: []typed.Typeable{&typed.StringTyped{}, &typed.StringTyped{}, &typed.NumberTyped{}}},
+			resolvedRaw:   []interface{}{},
+			expected: &typed.TupleValue{
+				ElementsTypes: []typed.Typeable{&typed.StringTyped{}, &typed.StringTyped{}, &typed.NumberTyped{}},
+				Elements: []typed.Valuable{
+					value(typed.NewStringValue("hasLength")),
+					value(typed.NewStringValue("greaterThan")),
+					value(typed.NewNumberValue(3)),
+				},
+			},
+		},
+		{
+			value:         []string{"hello", "there,", "wordld!"},
+			resolvedValue: &typed.ListValue{ElementsType: &typed.StringTyped{}},
+			resolvedRaw:   []interface{}{},
+			expected: &typed.ListValue{
+				ElementsType: &typed.StringTyped{},
+				Elements: []typed.Valuable{
+					value(typed.NewStringValue("hello")),
+					value(typed.NewStringValue("there,")),
+					value(typed.NewStringValue("wordld!")),
+				},
+			},
+		},
+		{
+			value:         []int64{1, 1, 1970},
+			resolvedValue: &typed.ListValue{ElementsType: &typed.NumberTyped{}},
+			resolvedRaw:   []int64{},
+			expected: &typed.ListValue{
+				ElementsType: &typed.NumberTyped{},
+				Elements: []typed.Valuable{
+					value(typed.NewNumberValue(1)),
+					value(typed.NewNumberValue(1)),
+					value(typed.NewNumberValue(1970)),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		val, err := Generic(tc.value)
+		if err != nil {
+			t.Fail()
+		}
+		err = val.As(tc.resolvedValue)
+		if err != nil {
+			t.Fail()
+		}
+		if !reflect.DeepEqual(tc.resolvedValue, tc.expected) {
+			t.Fail()
+		}
+
+		err = val.As(&tc.resolvedRaw)
+		if err != nil {
+			t.Fail()
+		}
+	}
+}
+
+func TestAssignGenericValue(t *testing.T) {
+	testCases := []struct {
+		name        string
+		value       typed.Valuable
+		resolvedRaw interface{}
+		expected    interface{}
+	}{
+		{
+			name:        "assign tuple to generic value succeeds",
+			expected:    []interface{}{"hasLength", "greaterThan", float64(3)},
+			resolvedRaw: []interface{}{},
+			value: &typed.TupleValue{
+				ElementsTypes: []typed.Typeable{&typed.StringTyped{}, &typed.StringTyped{}, &typed.NumberTyped{}},
+				Elements: []typed.Valuable{
+					value(typed.NewStringValue("hasLength")),
+					value(typed.NewStringValue("greaterThan")),
+					value(typed.NewNumberValue(3)),
+				},
+			},
+		},
+		{
+			name:        "assign list of strings to generic value succeeds",
+			expected:    []string{"hello", "there,", "wordld!"},
+			resolvedRaw: []string{},
+			value: &typed.ListValue{
+				ElementsType: &typed.StringTyped{},
+				Elements: []typed.Valuable{
+					value(typed.NewStringValue("hello")),
+					value(typed.NewStringValue("there,")),
+					value(typed.NewStringValue("wordld!")),
+				},
+			},
+		},
+		{
+			name:        "assign list of int64 to generic value succeeds",
+			expected:    []int64{1, 1, 1970},
+			resolvedRaw: []int64{},
+			value: &typed.ListValue{
+				ElementsType: &typed.NumberTyped{},
+				Elements: []typed.Valuable{
+					value(typed.NewNumberValue(1)),
+					value(typed.NewNumberValue(1)),
+					value(typed.NewNumberValue(1970)),
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			val := &typed.GenericValue{}
+			err := val.Assign(tc.value)
+			if err != nil {
+				t.Fail()
+			}
+
+			err = val.As(&tc.resolvedRaw)
+			if err != nil {
+				t.Fail()
+			}
+
+			if !reflect.DeepEqual(tc.resolvedRaw, tc.expected) {
+				t.Fail()
+			}
+		})
+	}
+}

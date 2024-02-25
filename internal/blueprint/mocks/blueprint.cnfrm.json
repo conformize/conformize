@@ -1,0 +1,22 @@
+{
+	"version": 1,
+	"sources": {
+		"appDev": {
+			"provider": "json"
+		}
+	},
+	"$refs": {
+		"appConfig": "$appDev.'server'"
+	},
+	"ruleset": [
+		{
+			"$value": "$appConfig",
+			"predicate": "IS_EQUAL_TO",
+			"arguments": [
+				{
+					"value": "localhost"
+				}
+			]
+		}
+	]
+}

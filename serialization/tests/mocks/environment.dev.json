@@ -1,0 +1,71 @@
+{
+	"appConfig": {
+	  "appName": "My Angular App",
+	  "version": "1.0.0",
+	  "environment": "development",
+	  "api": {
+		"endpoint": "https://api.example.com",
+		"timeout": 30000,
+		"retries": 3,
+		"headers": {
+		  "default": {
+			"Content-Type": "application/json",
+			"Accept": "application/json"
+		  },
+		  "custom": {
+			"X-Custom-Header": "custom-value"
+		  }
+		}
+	  },
+	  "features": {
+		"auth": {
+		  "enabled": true,
+		  "providers": {
+			"google": {
+			  "clientID": "YOUR_GOOGLE_CLIENT_ID",
+			  "callbackURL": "/auth/google/callback"
+			},
+			"facebook": {
+			  "clientID": "YOUR_FACEBOOK_CLIENT_ID",
+			  "callbackURL": "/auth/facebook/callback"
+			}
+		  }
+		},
+		"logging": {
+		  "level": "info",
+		  "external": {
+			"enabled": true,
+			"endpoint": "https://log.example.com"
+		  }
+		},
+		"themes": {
+		  "default": "light",
+		  "available": ["light", "dark", "blue"]
+		}
+	  },
+	  "database": {
+		"connection": {
+		  "host": "localhost",
+		  "port": 5432,
+		  "username": "dbuser",
+		  "password": "password",
+		  "dbName": "myappdb"
+		},
+		"pool": {
+		  "min": 2,
+		  "max": 10
+		}
+	  },
+	  "content": {
+		"cdn": {
+		  "url": "https://cdn.example.com",
+		  "fallback": "/assets/local/"
+		},
+		"externalLinks": {
+		  "support": "https://support.example.com",
+		  "documentation": "https://docs.example.com"
+		}
+	  }
+	}
+  }
+  

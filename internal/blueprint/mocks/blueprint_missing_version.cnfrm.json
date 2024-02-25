@@ -1,0 +1,21 @@
+{
+	"sources": {
+		"appDev": {
+			"provider": "json"
+		}
+	},
+	"$refs": {
+		"appServer": "$.appDev.'server'.'host'"
+	},
+	"ruleset": [
+		{
+			"$value": "$appServer",
+			"predicate": "EQUALS",
+			"arguments": [
+				{
+					"value": "localhost"
+				}
+			]
+		}
+	]
+}

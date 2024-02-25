@@ -1,0 +1,63 @@
+{
+	"version": 1,
+	"sources": {
+		"app-dev": {
+			"provider": "json",
+			"config": {
+				"Path": "./blueprint.cnfrm.json"
+			}
+		},
+		"app-prod": {
+			"provider": "consul",
+			"config": {
+				"Address": "localhost:8500",
+				"Path": "app/prod"
+			},
+			"resources": [
+				{
+					"Path": "msg-svc/",
+					"Namespace": "ns",
+					"Datacenter": "dc1"
+				}
+			]
+		}
+	},
+	"$refs": {
+		"consulServer": "$app-prod.'server'",
+		"appServer": "$app-dev.'server'"
+	},
+	"rules": [
+		{
+			"$value": "$appServer",
+			"predicates": [
+				{
+					"$value": "$value.'address'",
+					"condition": "EQUALS",
+					"arguments": [
+						{
+							"value": "localhost"
+						}
+					]
+				},
+				{
+					"$value": "$value.$attribute.'port'",
+					"condition": "EQUALS",
+					"arguments": [
+						{
+							"value": 8080
+						}
+					]
+				},
+				{
+					"$value": "$value.'ssl'",
+					"condition": "EQUALS",
+					"arguments": [
+						{
+							"path": "$consulServer.'ssl'"
+						}
+					]
+				}
+			]
+		}
+	]
+}

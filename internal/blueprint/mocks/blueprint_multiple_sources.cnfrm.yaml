@@ -1,0 +1,64 @@
+version: 1
+sources:
+  devEnv:
+    provider: json
+    config: 
+      Path: ./mocks/app-dev.json
+  testEnv:
+    provider: json
+    config: 
+      Path: ./mocks/app-dev.json
+  stageEnv:
+    provider: json
+    config: 
+      Path: ./mocks/app-dev.json
+  prodEnv:
+    provider: json
+    config: 
+      Path: ./mocks/app-dev.json
+ruleset:
+  - $value: $devEnv.'appConfig'.'api'.'endpoint'
+    predicate: equal
+    arguments:
+      - sensitive:
+          value: https://api.example.com
+  - $value: $devEnv.'appConfig'.'api'.'retries'
+    predicate: equal
+    arguments:
+      - value: 3
+  - $value: $devEnv.'appConfig'.'api'.'timeout'
+    predicate: greaterThanOrEqual
+    arguments:
+      - value: 10000
+  - $value: $devEnv.'appConfig'.'environment'
+    predicate: equal
+    arguments:
+      - value: dev
+  - $value: $devEnv.'appConfig'.'features'.'auth'.'enabled'
+    predicate: equal
+    arguments:
+      - value: true
+  - $value: $devEnv.'appConfig'.'features'.'logging'.'level'
+    predicate: equal
+    arguments:
+      - value: info
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'host'
+    predicate: notEqual
+    arguments:
+      - sensitive:
+          value: localhost
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'port'
+    predicate: equal
+    arguments:
+      - sensitive:
+          value: 5433
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'dbName'
+    predicate: equal
+    arguments:
+      - sensitive:
+          value: myappdb
+  - $value: $devEnv.'appConfig'.'database'.'pool'.'min'
+    predicate: withinRange
+    arguments:
+      - value: 5
+      - value: 10

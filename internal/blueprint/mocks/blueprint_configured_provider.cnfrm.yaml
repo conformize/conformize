@@ -1,0 +1,23 @@
+version: 1
+sources:
+  appDev:
+    provider: json
+    config:
+      Path: ./mocks/app-dev.json
+  appProd:
+    provider: consul
+    config:
+      Address: "localhost:8500"
+      Scheme: "http"
+      Datacenter: "dc1"
+    queryOptions:
+      Path: /
+      Recursive: true
+$refs:
+  consulServer: $appProd.'server'
+  appServer: $appDev
+ruleset:
+  - $value: $consulServer
+    predicate: IS_EQUAL_TO
+    arguments:
+      - value: localhost
