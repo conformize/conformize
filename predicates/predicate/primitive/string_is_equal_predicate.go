@@ -1,0 +1,69 @@
+// Copyright (c) 2024 Hristo Paskalev
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+//
+
+package primitive
+
+import (
+	"fmt"
+
+	"github.com/conformize/conformize/common/typed"
+	"github.com/conformize/conformize/internal/providers/api/schema"
+	"github.com/conformize/conformize/internal/providers/api/schema/attributes"
+)
+
+type StringIsEqualPredicate struct {
+	Args typed.Valuable
+}
+
+func (strIsEqPrd *StringIsEqualPredicate) Test(value typed.Valuable) (bool, error) {
+	if value == nil {
+		return false, fmt.Errorf("value is nil")
+	}
+
+	if value.Type().Hint() != typed.String {
+		return false, fmt.Errorf("expected a string value, got %s", value.Type().Name())
+	}
+
+	var s string
+	value.As(&s)
+
+	if strIsEqPrd.Args == nil {
+		return false, fmt.Errorf("arguments is nil")
+	}
+
+	if strIsEqPrd.Args.Type().Hint() != typed.String {
+		return false, fmt.Errorf("expected a string argument, got %s", strIsEqPrd.Args.Type().Name())
+	}
+
+	var so string
+	strIsEqPrd.Args.As(&so)
+
+	return s == so, nil
+}
+
+func (strLenPrd *StringIsEqualPredicate) ArgumentsCount() int {
+	return 1
+}
+
+func (strLenPrd *StringIsEqualPredicate) Arguments(args typed.Valuable) {
+	strLenPrd.Args = args
+}
+
+func (strLenPrd *StringIsEqualPredicate) Schema() schema.Schemable {
+	return &schema.Schema{
+		Description: "String equality predicate",
+		Version:     1,
+		Attributes: map[string]schema.Attributeable{
+			"Value": &attributes.StringAttribute{
+				Required: true,
+			},
+			"Arguments": &attributes.StringAttribute{
+				Required: true,
+			},
+		},
+	}
+}
