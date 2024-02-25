@@ -1,0 +1,72 @@
+version: 1
+sources:
+  devEnv:
+    json:
+      config:
+        path: ../../../mocks/app-dev.json
+  stageEnv:
+    json:
+      config:
+        path: ../../../mocks/app-dev.json
+  prodEnv:
+    json:
+      config:
+        path: ../../../mocks/app-dev.json
+$refs:
+  devApiConfig: $devEnv.'appConfig'.'api'
+  stageApiTimeout: $stageApiConfig.'timeout'
+  stageApiConfig: $stageEnv.'appConfig'.'api'
+  stageAuthProviders: $stageEnv.'appConfig'.'features'.'auth'.'providers'
+ruleset:
+  - $value: $devApiConfig.'endpoint'
+    equal:
+      - path: $stageApiConfig.'endpoint'
+  - $value: $devApiConfig.'retries'
+    equal:
+      - value: 3
+  - $value: $devApiConfig.'timeout'
+    greaterThanOrEqual:
+      - value: 5000
+  - $value: $devEnv.'appConfig'.'environment'
+    equal:
+      - value: development
+  - $value: $devEnv.'appConfig'.'features'.'auth'.'enabled'
+    isTrue:
+  - $value: $devEnv.'appConfig'.'features'.'logging'.'level'
+    equal:
+      - value: info
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'host'
+    equal:
+      - sensitive:
+          value: localhost
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'port'
+    equal:
+      - sensitive:
+          value: 5433
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'dbName'
+    equal:
+      - sensitive:
+          value: myappdb
+  - $value: $devEnv.'appConfig'.'database'.'pool'.'max'
+    withinRange:
+      - value: 100
+      - value: 200
+  - $value: $devEnv.'appConfig'.'features'.'themes'.'available'.length
+    greaterThan:
+      - value: 10
+  - name: All available themes are set
+    $value: $devEnv.'appConfig'.'features'.'themes'.'available'.length
+    greaterThanOrEqual:
+      - value: 2
+  - $value: $devEnv.'appConfig'.'features'.'themes'.'available'
+    containsAll:
+      - value:
+        - light
+        - dark
+        - blue
+  - $value: $stageAuthProviders.'google'.'clientSecret'.length
+    greaterThanOrEqual:
+      - value: 12
+  - $value: $stageAuthProviders.'facebook'.'clientSecret'.length
+    greaterThanOrEqual:
+      - value: 12
