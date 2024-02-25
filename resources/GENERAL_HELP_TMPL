@@ -1,0 +1,14 @@
+usage: conformize [global options] <command> [args]
+
+The available toplevel commands are listed below.
+
+available commands:
+
+%s
+To see details on the usage of command, please run:
+
+conformize [command] help
+
+global options (use these before command, if any):
+
+-workdir=DIR   Switch to a different working directory before executing the command.
