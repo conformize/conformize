@@ -1,0 +1,8 @@
+.vscode/*
+.Ds_Store*
+./**/.Ds_Store*
+.history/*
+conformize
+blueprint.cnfrm.*
+*.code-workspace
+build/**

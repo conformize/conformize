@@ -1,0 +1,40 @@
+{
+	"configuration": {
+		"api": {
+			"endpoint": "https://api.yourapp.com",
+			"timeout": 10000
+		},
+		"features": {
+			"auth": {
+				"enabled": true,
+				"methods": [
+					"password",
+					"oauth",
+					"sso"
+				]
+			},
+			"themes": {
+				"enabled": true,
+				"default": "light",
+				"available": [
+					"light",
+					"dark",
+					"blue",
+					"green"
+				]
+			}
+		},
+		"database": {
+			"host": "db.yourapp.com",
+			"port": 5432,
+			"credentials": {
+				"username": "admin",
+				"password": "supersecret"
+			},
+			"pool": {
+				"min": 5,
+				"max": 20
+			}
+		}
+	}
+}

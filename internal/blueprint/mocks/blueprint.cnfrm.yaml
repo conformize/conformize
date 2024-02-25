@@ -1,0 +1,78 @@
+version: 1
+sources:
+  devEnv:
+    json:
+      config:
+        path: ../../../mocks/app-dev.json
+  stageEnv:
+    json:
+      config:
+        path: ../../../mocks/app-dev.json
+  prodEnv:
+    json:
+      config:
+        path: ../../../mocks/app-dev.json
+        
+$refs:
+  devApiConfig: $devEnv.'appConfig'.'api'
+  stageApiTimeout: $stageApiConfig.'timeout'
+  stageApiConfig: $stageEnv.'appConfig'.'api'
+  stageAuthProviders: $stageEnv.'appConfig'.'features'.'auth'.'providers'
+
+ruleset:
+  - $value: $devApiConfig.'endpoint'
+    eq: $stageApiConfig.'endpoint'
+
+  - $value: $devApiConfig.'retries'
+    eq: 3
+
+  - $value: $devApiConfig.'timeout'
+    gte: 5000
+
+  - $value: $devEnv.'appConfig'.'environment'
+    eq: development
+
+  - $value: $devEnv.'appConfig'.'features'.'auth'.'enabled'
+    true:
+
+  - $value: $devEnv.'appConfig'.'features'.'logging'.'level'
+    eq: info
+
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'host'
+    eq:
+      sensitive: localhost
+
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'port'
+    eq:
+      sensitive: 5433
+
+  - $value: $devEnv.'appConfig'.'database'.'connection'.'dbName'
+    eq:
+      sensitive: myappdb
+
+  - $value: $devEnv.'appConfig'.'database'.'pool'.'max'
+    range:
+      - 100
+      - 200
+
+  - $value: $devEnv.'appConfig'.'features'.'themes'.'available'.none
+    eq: pink
+
+  - name: All available themes are set
+    $value: $devEnv.'appConfig'.'features'.'themes'.'available'
+    has:
+      - light
+      - dark
+      - cyan
+
+  - $value: $devEnv.'appConfig'.'features'.'themes'.'available'
+    eq:
+      - light
+      - dark
+      - blue
+
+  - $value: $stageAuthProviders.'google'.'clientSecret'.length
+    gte: 12
+
+  - $value: $stageAuthProviders.'facebook'.'clientSecret'.length
+    gte: 12

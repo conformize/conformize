@@ -1,0 +1,48 @@
+# Sample TOML Configuration for a Web Application
+
+title = "MyWebApp Configuration"
+
+[server]
+host = "0.0.0.0"
+port = 8080
+enable_https = true
+ssl_certificate_path = "/etc/ssl/mywebapp.crt"
+ssl_key_path = "/etc/ssl/mywebapp.key"
+
+[database]
+type = "PostgreSQL"
+host = "localhost"
+port = 5432
+username = "mywebapp_user"
+password = "secure_password"
+database_name = "mywebapp_db"
+
+[logging]
+level = "info"
+log_file = "logs/mywebapp.log"
+
+[security]
+jwt_secret = "your_jwt_secret_here"
+session_timeout = 3600 # Session timeout in seconds
+
+[features]
+enable_email_verification = true
+max_upload_size_mb = 50
+maintenance_mode = false
+
+[api]
+rate_limit = "100/hour"
+cors_origins = ["https://example.com", "https://api.example.com"]
+
+[redis]
+host = "localhost"
+port = 6379
+use_password = false
+
+[third_party]
+google_api_key = "your_google_api_key_here"
+sendgrid_api_key = "your_sendgrid_api_key_here"
+
+[environment]
+mode = "production"
+feature_flags = ["feature_x_enabled", "beta_user_group"]

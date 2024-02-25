@@ -1,0 +1,8 @@
+sources:
+  devEnv:
+    json:
+      config:
+        path: ../../mocks/app-dev.json
+ruleset:
+  - $value: $devApiConfig.'endpoint'
+    eq: $stageApiConfig.'endpoint'
