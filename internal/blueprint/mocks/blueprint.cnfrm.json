@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "sources": {
+    "devEnv": {
+      "json": {
+        "config": {
+          "path": "../../../mocks/app-dev.json"
+        }
+      }
+    },
+    "stageEnv": {
+      "json": {
+        "config": {
+          "path": "../../../mocks/app-dev.json"
+        }
+      }
+    },
+    "prodEnv": {
+      "json": {
+        "config": {
+          "path": "../../../mocks/app-dev.json"
+        }
+      }
+    }
+  },
+  "$refs": {
+    "devApiConfig": "$devEnv.'appConfig'.'api'",
+    "stageApiTimeout": "$stageApiConfig.'timeout'",
+    "stageApiConfig": "$stageEnv.'appConfig'.'api'",
+    "stageAuthProviders": "$stageEnv.'appConfig'.'features'.'auth'.'providers'"
+  },
+  "ruleset": [
+    {
+      "$value": "$devApiConfig.'endpoint'",
+      "equal": "$stageApiConfig.'endpoint'"
+    },
+    {
+      "$value": "$devApiConfig.'retries'",
+      "equal": 3
+    },
+    {
+      "$value": "$devApiConfig.'timeout'",
+      "greaterThanOrEqual": 5000
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'environment'",
+      "equal": "development"
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'features'.'auth'.'enabled'",
+      "isTrue": true
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'features'.'logging'.'level'",
+      "equal": "info"
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'database'.'connection'.'host'",
+      "equal": {
+        "sensitive": "localhost"
+      }
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'database'.'connection'.'port'",
+      "equal": {
+        "sensitive": 5433
+      }
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'database'.'connection'.'dbName'",
+      "equal": {
+        "sensitive": "myappdb"
+      }
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'database'.'pool'.'max'",
+      "withinRange": [100, 200]
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'features'.'themes'.'available'.noneOf",
+      "equal": "pink"
+    },
+    {
+      "name": "All available themes are set",
+      "$value": "$devEnv.'appConfig'.'features'.'themes'.'available'.length",
+      "greaterThanOrEqual": 2
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'features'.'themes'.'available'",
+      "containsAll": ["light", "dark"]
+    },
+    {
+      "$value": "$devEnv.'appConfig'.'features'.'themes'.'available'",
+      "equal": ["light", "dark", "blue"]
+    },
+    {
+      "$value": "$stageAuthProviders.'google'.'clientSecret'.length",
+      "greaterThanOrEqual": 12
+    },
+    {
+      "$value": "$stageAuthProviders.'facebook'.'clientSecret'.length",
+      "greaterThanOrEqual": 12
+    }
+  ]
+}
